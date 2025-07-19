@@ -9,7 +9,7 @@ D = 0.001
 dt = 0.001
 dx = dy = 0.1
 nx = ny = 50  # 网格维度
-c_values = np.linspace(25, 27, 21)  # 从25到27，生成21个c值
+c_values = np.linspace(25, 27, 210)  # 从25到27，生成21个c值
 
 # 初始化网格和随机初始V
 x = np.linspace(0, (nx - 1) * dx, nx)
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     # 计算均值
     mean_values = [np.mean(result) for result in results]  # 原始均值计算
     # 添加高斯白噪声
-    noise_level = 0.5  # 噪声强度
+    noise_level = 1.0  # 噪声强度
     noisy_results = [result + np.random.normal(0, noise_level, result.shape) for result in results]
     mean_noisy_values = [np.mean(noisy_result) for noisy_result in noisy_results]  # 噪声版本均值计算
 
