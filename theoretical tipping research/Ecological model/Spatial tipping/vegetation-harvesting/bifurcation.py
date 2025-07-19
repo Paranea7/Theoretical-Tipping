@@ -9,7 +9,7 @@ D = 0.001
 dt = 0.001
 dx = dy = 0.1
 nx = ny = 50  # 网格维度
-c_values = np.linspace(25, 27, 21)  # 从25到27，生成21个c值
+c_values = np.linspace(28, 32, 41)  # 从25到27，生成21个c值
 
 # 初始化网格和随机初始V
 x = np.linspace(0, (nx - 1) * dx, nx)
