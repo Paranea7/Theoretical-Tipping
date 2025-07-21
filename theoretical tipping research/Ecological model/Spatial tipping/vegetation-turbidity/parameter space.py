@@ -9,7 +9,7 @@ dx = dy = 0.1
 nx = ny = 50  # 网格维度
 p = 4.0
 E0_values = np.linspace(4, 6, 21)  # 从4到6，生成21个E0值
-r_values = np.linspace(5, 15, 21)  # 从5到15，生成11个r值
+r_values = np.linspace(5, 15, 21)  # 从5到15，生成21个r值
 h_E = 1.5  # 设定的常数
 h_v = 0.2  # 设定的常数
 
@@ -48,15 +48,18 @@ if __name__ == '__main__':
     with Pool() as pool:  # 使用全部可用的CPU核心
         mean_values = pool.map(compute_for_E0_r, params)
 
-    # reshape mean_values 为 2D数组
+    # 重新塑形mean_values 为 2D 数组
     mean_values = np.array(mean_values).reshape(len(E0_values), len(r_values))
 
-    # 绘制参数空间图，交换E0和r的位置
+    # 绘制参数空间图
     plt.figure(figsize=(10, 6))
-    plt.contourf(E0_values, r_values, mean_values, levels=50, cmap='viridis')  # 这里交换了E0和r的位置
+    plt.contourf(E0_values, r_values, mean_values, levels=50, cmap='viridis')  # 根据E0和r绘制图
     plt.colorbar(label='Mean V')
     plt.title('Parameter Space Diagram of E0-r')
     plt.xlabel('E0')  # 横坐标为E0
     plt.ylabel('r')   # 纵坐标为r
     plt.grid()
-    plt.show()
+
+    # 保存图像
+    plt.savefig('E0_r_diagram.png', dpi=300)  # 保存为PNG格式，分辨率为300 dpi
+    plt.show()  # 显示图像
