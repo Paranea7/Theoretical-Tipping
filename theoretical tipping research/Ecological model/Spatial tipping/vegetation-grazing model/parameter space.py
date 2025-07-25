@@ -10,8 +10,8 @@ dx = dy = 0.1
 nx = ny = 50  # 网格维度
 
 # 定义 r 和 c 的取值范围
-r_values = np.linspace(5, 15, 11)  # r 的取值范围
-c_values = np.linspace(25, 27, 21)  # c 的取值范围
+r_values = np.linspace(0.4, 2.5, 22)  # r 的取值范围
+c_values = np.linspace(0.1, 2.0, 20)  # c 的取值范围
 
 # 定义拉普拉斯算子
 def laplacian(V):
