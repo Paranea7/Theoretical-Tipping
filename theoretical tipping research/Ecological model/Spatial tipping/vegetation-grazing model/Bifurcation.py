@@ -38,7 +38,7 @@ def rk4_step(V, c):
 
 # 计算每个c值下的结果
 def compute_for_c(c):
-    V = np.random.uniform(8.0, 11.1, (nx, ny))  # 每次重新初始化V，生成在10到10.1之间的均匀随机数
+    V = np.loadtxt('initial_V.csv', delimiter=',')  # 每次重新初始化V，生成在10到10.1之间的均匀随机数
     for t in range(15000):  # 迭代15000次，时间步数
         V = rk4_step(V, c)
     return V  # 返回最终的V

@@ -3,15 +3,15 @@ import matplotlib.pyplot as plt
 from multiprocessing import Pool
 
 # 参数设置
-c = 10.0  # 固定 c 值
+c = 1.0  # 固定 c 值
 D = 0.001
 dt = 0.001
 dx = dy = 0.1
 nx = ny = 50  # 网格维度
 
 # 定义 r 和 V_c 的取值范围
-r_values = np.linspace(1, 15, 16)  # r 的取值范围
-V_c_values = np.linspace(1, 20, 21)  # V_c 的取值范围
+r_values = np.linspace(0, 1.5, 160)  # r 的取值范围
+V_c_values = np.linspace(1, 20, 210)  # V_c 的取值范围
 
 # 定义拉普拉斯算子
 def laplacian(V):
@@ -37,8 +37,8 @@ def rk4_step(V, r, V_c):
 # 计算每个(r, V_c)组合下的结果
 def compute_for_r_Vc(params):
     r, V_c = params
-    V = np.random.uniform(10, 10.1, (nx, ny))  # 随机初始化V
-    for t in range(15000):  # 迭代15000次
+    V = np.loadtxt('initial_V.csv', delimiter=',')
+    for t in range(50000):  # 迭代15000次
         V = rk4_step(V, r, V_c)
     return np.mean(V)  # 返回最终的平均V
 

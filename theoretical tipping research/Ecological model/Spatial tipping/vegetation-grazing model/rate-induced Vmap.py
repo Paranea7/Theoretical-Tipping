@@ -42,7 +42,7 @@ fig, axs = plt.subplots(1, 6, figsize=(30, 5))
 
 # 计算每个(c)组合下的结果并绘图
 for idx, c in enumerate(c_values):
-    V = np.random.uniform(2.0, 5.0, (nx, ny))  # 随机初始化V
+    V = np.random.uniform(2.3, 4.0, (nx, ny))  # 随机初始化V
     for t in range(num_iterations):  # 迭代若干次
         V = rk4_step(V, V_c, c, t)
 
