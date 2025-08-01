@@ -37,7 +37,7 @@ def rk4_step(V, r, V_c):
 # 计算每个(r, V_c)组合下的结果
 def compute_for_r_Vc(params):
     r, V_c = params
-    V = np.loadtxt('initial_V.csv', delimiter=',')
+    V = np.loadtxt('1.5-5.5.csv', delimiter=',')
     for t in range(50000):  # 迭代15000次
         V = rk4_step(V, r, V_c)
     return np.mean(V)  # 返回最终的平均V

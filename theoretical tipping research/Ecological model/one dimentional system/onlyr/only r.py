@@ -31,7 +31,7 @@ def rk4(x0, r_func, dt, num_steps):
 # 固定 r 和生成初始条件
 @njit
 def r_func(t):
-    return 0.47 + np.exp(-t) * np.sin(0.8 * t)
+    return 0.47 + 0.05 * np.sin(0.01 * t)
 
 # 生成初始值
 x0_values = np.linspace(0, 7, 710)  # 生成初始值

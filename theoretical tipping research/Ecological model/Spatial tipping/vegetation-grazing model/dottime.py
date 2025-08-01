@@ -35,7 +35,7 @@ def rk4_step(V, r_value, V_c, c):
     return V_next
 
 # 初始化网格和选择的点
-V = np.loadtxt('initial_V.csv', delimiter=',')
+V = np.loadtxt('1.5-5.5.csv', delimiter=',')
 point_x, point_y = 20, 20  # 例：选择网格中心点
 
 # 存储该点的值随时间的变化

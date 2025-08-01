@@ -8,8 +8,8 @@ D = 0.001
 dt = 0.001
 dx = dy = 0.1
 nx = ny = 50  # 网格维度
-c_values = [1.10, 1.12, 1.13, 1.15, 1.17, 1.19]  # 不同的 c 值
-num_iterations = 60000  # 迭代次数
+c_values = [1.10, 1.13, 1.14, 1.15, 1.16, 1.19]  # 不同的 c 值
+num_iterations = 50000  # 迭代次数
 
 # 不随时间变化的 r
 def r_static():
@@ -17,7 +17,7 @@ def r_static():
 
 # 随时间变化的 r
 def r(t):
-    return 0.47 + 0.05 * np.sin(0.8 * t)  # 随时间 t 线性变化
+    return 0.47 + 0.05 * np.sin(0.01 * t) # 随时间 t 线性变化
 
 # 定义拉普拉斯算子
 def laplacian(V):
@@ -47,7 +47,7 @@ fig, axs = plt.subplots(3, 6, figsize=(30, 15))
 # 第一行：无时间变化的 r
 for idx, c in enumerate(c_values):
     # 从 CSV 文件读取 V
-    V = np.loadtxt('initial_V.csv', delimiter=',')
+    V = np.loadtxt('1.5-5.5.csv', delimiter=',')
 
     for t in range(num_iterations):  # 迭代若干次
         V = rk4_step(V, r_static(), V_c, c)
@@ -65,7 +65,7 @@ cbar1 = fig.colorbar(im, ax=axs[0, :], orientation='vertical', fraction=0.02, pa
 # 第二行：随时间变化的 r
 for idx, c in enumerate(c_values):
     # 从 CSV 文件读取 V
-    V = np.loadtxt('initial_V.csv', delimiter=',')
+    V = np.loadtxt('1.5-5.5.csv', delimiter=',')
 
     for t in range(num_iterations):  # 迭代若干次
         V = rk4_step(V, r(t), V_c, c)
@@ -83,13 +83,13 @@ cbar2 = fig.colorbar(im, ax=axs[1, :], orientation='vertical', fraction=0.02, pa
 # 第三行：计算差值并绘制
 for idx, c in enumerate(c_values):
     # 从 CSV 文件读取 V
-    V_static = np.loadtxt('initial_V.csv', delimiter=',')
+    V_static = np.loadtxt('1.5-5.5.csv', delimiter=',')
 
     for t in range(num_iterations):
         V_static = rk4_step(V_static, r_static(), V_c, c)
 
     # 从 CSV 文件读取 V
-    V_dynamic = np.loadtxt('initial_V.csv', delimiter=',')
+    V_dynamic = np.loadtxt('1.5-5.5.csv', delimiter=',')
 
     for t in range(num_iterations):
         V_dynamic = rk4_step(V_dynamic, r(t), V_c, c)
@@ -97,13 +97,13 @@ for idx, c in enumerate(c_values):
     V_diff = V_dynamic - V_static
 
     im = axs[2, idx].imshow(V_diff, extent=[0, nx * dx, 0, ny * dy], origin='lower',
-                            aspect='auto', vmin=-6, vmax=6)
+                            aspect='auto', vmin=-2, vmax=2)
     axs[2, idx].set_title(f'Diff: c = {c}')
     axs[2, idx].set_xlabel('x')
     axs[2, idx].set_ylabel('y')
 
 # 添加公共颜色条：第三行
-norm3 = Normalize(vmin=-6, vmax=6)
+norm3 = Normalize(vmin=-2, vmax=2)
 cbar3 = fig.colorbar(im, ax=axs[2, :], orientation='vertical', fraction=0.02, pad=0.04, norm=norm3)
 
 plt.show()

@@ -12,7 +12,7 @@ c_values = [1.10, 1.12, 1.13, 1.15, 1.17, 1.19]  # 不同的 c 值
 num_iterations = 6000  # 迭代次数
 
 # 定义 ω 的取值范围
-omega_values = np.linspace(0.01, 1.0, 101)  # 示例：频率范围，您可以根据需要进行调整
+omega_values = np.linspace(0.01, 2.0, 42)  # 示例：频率范围，您可以根据需要进行调整
 proportions = []  # 存储每个 ω 值对应的比例
 
 
@@ -51,19 +51,19 @@ def rk4_step(V, r_value, V_c, c):
 
 # 计算每个 ω 下的比例
 for omega in omega_values:
-    V_static = np.loadtxt('initial_V.csv', delimiter=',')
+    V_static = np.loadtxt('1.5-5.5.csv', delimiter=',')
 
     for t in range(num_iterations):
-        V_static = rk4_step(V_static, r_static(), V_c, c_values[3])  # 选择第一个 c 值
+        V_static = rk4_step(V_static, r_static(), V_c, c_values[2])  # 选择第一个 c 值
 
-    V_dynamic = np.loadtxt('initial_V.csv', delimiter=',')
+    V_dynamic = np.loadtxt('1.5-5.5.csv', delimiter=',')
 
     for t in range(num_iterations):
-        V_dynamic = rk4_step(V_dynamic, r(t, omega), V_c, c_values[3])  # 选择第一个 c 值
+        V_dynamic = rk4_step(V_dynamic, r(t, omega), V_c, c_values[2])  # 选择第一个 c 值
 
     V_diff = V_dynamic - V_static
     # 统计大于0的点的数量
-    count_greater_than_zero = np.sum(V_diff > 0)
+    count_greater_than_zero = np.sum(V_diff > 0.01)
     total_points = nx * ny  # 点的总数
     proportion = count_greater_than_zero / total_points  # 比例
 
