@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.colors import Normalize
 from matplotlib.animation import FuncAnimation
+import multiprocessing as mp
+from functools import partial
 
 # 参数设置
 V_c = 10.0
@@ -9,17 +10,21 @@ D = 0.001
 dt = 0.01
 dx = dy = 0.1
 nx = ny = 50  # 网格维度
-c_values = [1.14]  # 选择一个 c 值
+c_values = [1.10, 1.13, 1.14, 1.15, 1.16, 1.19]  # 不同的 c 值
 num_iterations = 6000  # 迭代次数
-last_steps = 1000  # 最后绘制的步数
+start_frame = 1600  # 提取开始帧
+end_frame = 3100    # 提取结束帧
 
-# 随时间变化的 r
-def r(t):
-    return 0.47 + 0.05 * np.sin(0.01 * t)  # 随时间 t 线性变化
+def load_static_data():
+    return np.loadtxt('1.5-5.5.csv', delimiter=',')  # 预加静态数据
 
 # 不随时间变化的 r
 def r_static():
     return 0.47  # 静态 r 值
+
+# 随时间变化的 r
+def r(t):
+    return 0.47 + 0.05 * np.sin(0.01 * t)
 
 # 定义拉普拉斯算子
 def laplacian(V):
@@ -42,63 +47,67 @@ def rk4_step(V, r_value, V_c, c):
     V_next = V + dt / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
     return V_next
 
-# 从 CSV 文件读取 V
-V_initial = np.loadtxt('1.5-5.5.csv', delimiter=',')
-frames_static = []
-frames_dynamic = []
-frames_diff = []
+# 迭代和保存中间结果的函数
+def run_simulation(c, V_static):
+    V_dynamic = np.copy(V_static)  # 创建动态 V
+    frames_static = []
+    frames_dynamic = []
 
-# 在最后1000步中进行迭代并更新索引
-for t in range(num_iterations):
-    # 只有前num_iterations - last_steps步计算静态frame
-    if t < num_iterations - last_steps:
-        V_initial = rk4_step(V_initial, r_static(), V_c, c_values[0])
-        if t >= 0:  # 记录静态结果
-            frames_static.append(V_initial.copy())
-    # 动态r
-    V_dynamic = rk4_step(V_initial.copy(), r(t), V_c, c_values[0])
-    frames_dynamic.append(V_dynamic.copy())
+    for t in range(num_iterations):
+        V_static = rk4_step(V_static, r_static(), V_c, c)
+        V_dynamic = rk4_step(V_dynamic, r(t), V_c, c)  # 按时间更新 V_dynamic
 
-    # 计算差分图（差值只记录最后1000步）
-    if t >= num_iterations - last_steps:
-        V_diff = V_dynamic - frames_static[-1]  # 取静态最后一帧进行差分
-        frames_diff.append(V_diff.copy())
+        if start_frame <= t <= end_frame:  # 仅保留2000到4000帧
+            frames_static.append(V_static)
+            frames_dynamic.append(V_dynamic)
 
-# 只保留最后1000步的动态和差分图
-frames_dynamic = frames_dynamic[-last_steps:]
-frames_diff = frames_diff[-last_steps:]
+    return frames_static, frames_dynamic  # 返回静态和动态帧
 
-# 创建图像以呈现动画
-fig, axs = plt.subplots(1, 3, figsize=(24, 8))
-(im_static, im_dynamic, im_diff) = (
-    axs[0].imshow(frames_static[-1], extent=[0, nx * dx, 0, ny * dy], origin='lower',
-                  aspect='auto', vmin=0, vmax=6),
-    axs[1].imshow(frames_dynamic[0], extent=[0, nx * dx, 0, ny * dy], origin='lower',
-                  aspect='auto', vmin=0, vmax=6),
-    axs[2].imshow(frames_diff[0], extent=[0, nx * dx, 0, ny * dy], origin='lower',
-                  aspect='auto', vmin=-2, vmax=2)
-)
+# 设置动画参数
+def animate(frame):
+    for idx, c in enumerate(c_values):
+        axs[0, idx].cla()
+        axs[1, idx].cla()
+        axs[2, idx].cla()
 
-# 设置标题和标签
-axs[0].set_title('Static r: c = {}'.format(c_values[0]))
-axs[1].set_title('Dynamic r: c = {}'.format(c_values[0]))
-axs[2].set_title('Difference: c = {}'.format(c_values[0]))
+        V_static = results[idx][0][frame]  # 静态数据
+        V_dynamic = results[idx][1][frame]  # 动态数据
 
-for ax in axs:
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    plt.colorbar(im_static, ax=ax, orientation='vertical', fraction=0.02, pad=0.04)
+        axs[0, idx].imshow(V_static, extent=[0, nx * dx, 0, ny * dy], origin='lower', aspect='auto', vmin=0, vmax=6)
+        axs[0, idx].set_title(f'No Time: c = {c}')
+        axs[0, idx].set_xlabel('x')
+        axs[0, idx].set_ylabel('y')
 
-# 更新函数
-def update(frame):
-    im_dynamic.set_array(frames_dynamic[frame])
-    im_diff.set_array(frames_diff[frame])
-    return [im_dynamic, im_diff]
+        axs[1, idx].imshow(V_dynamic, extent=[0, nx * dx, 0, ny * dy], origin='lower', aspect='auto', vmin=0, vmax=6)
+        axs[1, idx].set_title(f'Time Var: c = {c}')
+        axs[1, idx].set_xlabel('x')
+        axs[1, idx].set_ylabel('y')
 
-# 创建动画，减慢播放速度
-ani = FuncAnimation(fig, update, frames=len(frames_dynamic), blit=True, repeat=False, interval=10)  # 设置interval为100ms
+        V_diff = V_dynamic - V_static
+        axs[2, idx].imshow(V_diff, extent=[0, nx * dx, 0, ny * dy], origin='lower', aspect='auto', vmin=-2, vmax=2)
+        axs[2, idx].set_title(f'Diff: c = {c}')
+        axs[2, idx].set_xlabel('x')
+        axs[2, idx].set_ylabel('y')
 
-# 保存为GIF文件
-ani.save('simulation_animation.gif', writer='imagemagick', fps=10)  # fps设置为10
+    return []
 
-plt.show()
+if __name__ == "__main__":
+    # 创建图像和动画
+    fig, axs = plt.subplots(3, 6, figsize=(30, 15))
+
+    # 预加载静态数据
+    static_data = load_static_data()
+
+    # 使用多进程并行计算
+    with mp.Pool(processes=16) as pool:
+        results = pool.map(partial(run_simulation, V_static=static_data), c_values)
+
+    # 创建动画
+    num_frames = end_frame - start_frame + 1  # 计算动画要显示的帧数
+    anim = FuncAnimation(fig, animate, frames=num_frames, interval=1000/240, blit=False)
+
+    # 保存为GIF
+    anim.save('reaction_diffusion_animation.gif', writer='pillow')
+
+    # 显示图形窗口
+    plt.show()

@@ -31,10 +31,10 @@ def rk4(x0, r_func, dt, num_steps):
 # 固定 r 和生成初始条件
 @njit
 def r_func(t):
-    return 0.47 + 0.05 * np.sin(0.01 * t)
+    return 0.47 + 0.05 * np.sin(0.05 * t)
 
 # 生成初始值
-x0_values = np.linspace(0, 7, 710)  # 生成初始值
+x0_values = np.linspace(0, 9, 910)  # 生成初始值
 all_x_values = np.zeros((len(x0_values), num_steps))  # 存储每个初始条件的演化
 
 # 计算每个初始值的演化

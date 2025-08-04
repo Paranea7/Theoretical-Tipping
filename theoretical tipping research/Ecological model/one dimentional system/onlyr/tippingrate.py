@@ -14,8 +14,8 @@ alpha = 1.0  # 参数 alpha
 beta = 1.0  # 参数 beta
 
 # 定义初值和终值的阈值
-initial_threshold = 2.32  # 初值的阈值
-final_threshold = 3  # 终值的阈值
+initial_threshold = 2.36  # 初值的阈值
+final_threshold = 3.5  # 终值的阈值
 
 @njit
 def rk4_optimized(x0s, w, dt, num_steps, r_values):
@@ -69,7 +69,13 @@ def r_func2(w, t):
     return 0.47 + 1 / (t + 1e-18) * np.sin(w * t)  # 选择一个非常小的epsilon来避免除以零
 
 def r_func3(w, t):
-    return 0.47 + 0.05 * np.sin(w * t)
+    return 0.47 + 0.02 * np.sin(w * t)
+
+def r_func4(w, t):
+    return 0.47 + 0.05 * np.sin(w * t)  # 新加的振幅函数，振幅为0.1
+
+def r_func5(w, t):
+    return 0.47 + 0.1 * np.sin(w * t)  # 新加的振幅函数，振幅为0.2
 
 # w 的范围
 w_values = np.linspace(0.01, 1.10, 1110)  # w的范围
@@ -78,8 +84,8 @@ w_values = np.linspace(0.01, 1.10, 1110)  # w的范围
 if __name__ == "__main__":
     plt.figure(figsize=(12, 6))
 
-    r_funcs = [r_func1, r_func2, r_func3]  # 保存振幅函数的列表
-    A_labels = ['A(t) = e^{-t}sin(0.1t)', 'A(t) = 1/(t+ε)', 'A(t) = 0.05sin(0.1t)']
+    r_funcs = [r_func1, r_func2, r_func3, r_func4, r_func5]  # 更新振幅函数的列表，包括新添加的函数
+    A_labels = ['A(t) = e^{-t}sin(wt)', 'A(t) = 1/(t+ε)', 'A(t) = 0.05sin(wt)', 'A(t) = 0.1sin(wt)', 'A(t) = 0.2sin(wt)']
 
     for r_func, label in zip(r_funcs, A_labels):
         with Pool() as pool:

@@ -12,7 +12,7 @@ c_values = [1.10, 1.12, 1.13, 1.15, 1.17, 1.19]  # 不同的 c 值
 num_iterations = 6000  # 迭代次数
 
 # 定义 ω 的取值范围
-omega_values = np.linspace(0.01, 2.0, 42)  # 示例：频率范围，您可以根据需要进行调整
+omega_values = np.linspace(0.01, 2.0, 210)  # 示例：频率范围，您可以根据需要进行调整
 proportions = []  # 存储每个 ω 值对应的比例
 
 
