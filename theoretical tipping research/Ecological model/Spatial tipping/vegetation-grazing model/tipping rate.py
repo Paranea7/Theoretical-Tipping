@@ -54,12 +54,12 @@ for omega in omega_values:
     V_static = np.loadtxt('1.5-5.5.csv', delimiter=',')
 
     for t in range(num_iterations):
-        V_static = rk4_step(V_static, r_static(), V_c, c_values[2])  # 选择第一个 c 值
+        V_static = rk4_step(V_static, r_static(), V_c, c_values[3])  # 选择第一个 c 值
 
     V_dynamic = np.loadtxt('1.5-5.5.csv', delimiter=',')
 
     for t in range(num_iterations):
-        V_dynamic = rk4_step(V_dynamic, r(t, omega), V_c, c_values[2])  # 选择第一个 c 值
+        V_dynamic = rk4_step(V_dynamic, r(t, omega), V_c, c_values[3])  # 选择第一个 c 值
 
     V_diff = V_dynamic - V_static
     # 统计大于0的点的数量

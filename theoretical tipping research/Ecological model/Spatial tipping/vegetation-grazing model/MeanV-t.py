@@ -44,7 +44,7 @@ def rk4(V0, r_func, dt, num_steps):
 
 # 固定 r 和生成初始条件
 def r_func(t):
-    return 0.47 + 0.02 * np.sin(0.5*t)
+    return 0.47 + 0.05 * np.sin(0.1 * t)
 
 
 # 定义并行计算的函数
@@ -58,7 +58,7 @@ def compute_for_initial_condition(V0):
 
 
 # 设置初始值范围
-initial_conditions = np.linspace(5, 20, 160)  # 生成160个均匀分布的初始值
+initial_conditions = np.linspace(1, 9, 100)  # 生成160个均匀分布的初始值
 
 # 使用 multiprocessing.Pool 进行并行计算
 if __name__ == '__main__':

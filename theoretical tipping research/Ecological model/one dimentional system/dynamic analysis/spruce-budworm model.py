@@ -68,14 +68,13 @@ r_points_np, x_points_np = zip(*roots_np) if roots_np else ([], [])
 # 绘制双稳态曲线
 plt.figure(figsize=(12, 6))
 # 使用 np.roots 方法得到的不动点
-plt.scatter(r_points_np, x_points_np, s=10, c='y', label='Using np.roots', zorder=2)
-plt.plot(r_unique, x_bistable_1, marker='o', label='Stable State 1 (RK4)', color='blue', zorder=1)
-plt.plot(r_unique, x_bistable_2, marker='x', label='Stable State 2 (RK4)', color='red', zorder=1)
+plt.scatter(r_points_np, x_points_np, s=10, c='y', zorder=2)
+plt.plot(r_unique, x_bistable_1, marker='o', color='blue', zorder=1)
+plt.plot(r_unique, x_bistable_2, marker='x', color='red', zorder=1)
 plt.xlabel('r')
 plt.ylabel('Steady state x')
-plt.title('Bistability in the System')
 plt.xticks(np.arange(0, 1.1, 0.1))
 plt.yticks(np.arange(0, 11, 1))
-plt.legend()
+
 plt.grid()
 plt.show()

@@ -6,7 +6,7 @@ k0 = 10  # k的基础值
 alpha = 1
 beta = 1
 dt = 0.01  # 步长
-time_end = 100  # 仿真结束时间
+time_end = 10000  # 仿真结束时间
 num_steps = int(time_end / dt)
 
 # RK4 方法（向量化）
@@ -16,8 +16,8 @@ def rk4_vec(x0_values, dt, num_steps):
 
     for i in range(1, num_steps):
         t = i * dt  # 当前时间
-        r = 0.47 + 0.05 * np.sin(0.5 * t)  # 动态 r 值
-        k = k0 + 1 * np.sin(0.01 * t)  # 动态 k 值
+        r = 0.47 + 0.02 * np.sin(0.02 * t)  # 动态 r 值
+        k = k0 + 2 * np.sin(0.02 * t)  # 动态 k 值
 
         x_prev = x_values[:, i - 1]
 
