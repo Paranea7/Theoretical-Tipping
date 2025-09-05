@@ -5,11 +5,11 @@ from matplotlib.colors import Normalize
 # 参数设置
 V_c = 10.0
 D = 0.001
-dt = 0.01
+dt = 0.001
 dx = dy = 0.1
-nx = ny = 2.0  # 修改网格维度为2.0，表示2米的网格
+nx = ny = 2  # 网格维度
 c_values = [1.10, 1.13, 1.14, 1.15, 1.16, 1.19]  # 不同的 c 值
-num_iterations = 1000  # 迭代次数
+num_iterations = 50000  # 迭代次数
 
 # 不随时间变化的 r
 def r_static():
@@ -17,7 +17,7 @@ def r_static():
 
 # 随时间变化的 r
 def r(t):
-    return 0.47 + 0.05 * np.sin(0.01 * t)  # 随时间 t 线性变化
+    return 0.47 + 0.05 * np.sin(0.01 * t) # 随时间 t 线性变化
 
 # 定义拉普拉斯算子
 def laplacian(V):
@@ -39,14 +39,15 @@ def rk4_step(V, r_value, V_c, c):
 
     V_next = V + dt / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
     return V_next
-V_0 = np.random.uniform(1.0, 9.0, (2, 2))
+
+
 # 创建图像，三行布局
 fig, axs = plt.subplots(3, 6, figsize=(30, 15))
 
 # 第一行：无时间变化的 r
 for idx, c in enumerate(c_values):
     # 从 CSV 文件读取 V
-    V = V_0
+    V = np.loadtxt('1.5-5.5quan.csv', delimiter=',')
 
     for t in range(num_iterations):  # 迭代若干次
         V = rk4_step(V, r_static(), V_c, c)
@@ -54,8 +55,8 @@ for idx, c in enumerate(c_values):
     im = axs[0, idx].imshow(V, extent=[0, nx * dx, 0, ny * dy], origin='lower',
                             aspect='auto', vmin=0, vmax=6)
     axs[0, idx].set_title(f'No Time: c = {c}')
-    axs[0, idx].set_xlabel('x (meters)')
-    axs[0, idx].set_ylabel('y (meters)')
+    axs[0, idx].set_xlabel('x')
+    axs[0, idx].set_ylabel('y')
 
 # 添加公共颜色条：第一行
 norm1 = Normalize(vmin=0, vmax=6)
@@ -64,7 +65,7 @@ cbar1 = fig.colorbar(im, ax=axs[0, :], orientation='vertical', fraction=0.02, pa
 # 第二行：随时间变化的 r
 for idx, c in enumerate(c_values):
     # 从 CSV 文件读取 V
-    V = V_0
+    V = np.loadtxt('1.5-5.5quan.csv', delimiter=',')
 
     for t in range(num_iterations):  # 迭代若干次
         V = rk4_step(V, r(t), V_c, c)
@@ -72,8 +73,8 @@ for idx, c in enumerate(c_values):
     im = axs[1, idx].imshow(V, extent=[0, nx * dx, 0, ny * dy], origin='lower',
                             aspect='auto', vmin=0, vmax=6)
     axs[1, idx].set_title(f'Time Var: c = {c}')
-    axs[1, idx].set_xlabel('x (meters)')
-    axs[1, idx].set_ylabel('y (meters)')
+    axs[1, idx].set_xlabel('x')
+    axs[1, idx].set_ylabel('y')
 
 # 添加公共颜色条：第二行
 norm2 = Normalize(vmin=0, vmax=6)
@@ -82,13 +83,13 @@ cbar2 = fig.colorbar(im, ax=axs[1, :], orientation='vertical', fraction=0.02, pa
 # 第三行：计算差值并绘制
 for idx, c in enumerate(c_values):
     # 从 CSV 文件读取 V
-    V_static = V_0
+    V_static = np.loadtxt('1.5-5.5quan.csv', delimiter=',')
 
     for t in range(num_iterations):
         V_static = rk4_step(V_static, r_static(), V_c, c)
 
     # 从 CSV 文件读取 V
-    V_dynamic = V_0
+    V_dynamic = np.loadtxt('1.5-5.5quan.csv', delimiter=',')
 
     for t in range(num_iterations):
         V_dynamic = rk4_step(V_dynamic, r(t), V_c, c)
@@ -98,8 +99,8 @@ for idx, c in enumerate(c_values):
     im = axs[2, idx].imshow(V_diff, extent=[0, nx * dx, 0, ny * dy], origin='lower',
                             aspect='auto', vmin=-2, vmax=2)
     axs[2, idx].set_title(f'Diff: c = {c}')
-    axs[2, idx].set_xlabel('x (meters)')
-    axs[2, idx].set_ylabel('y (meters)')
+    axs[2, idx].set_xlabel('x')
+    axs[2, idx].set_ylabel('y')
 
 # 添加公共颜色条：第三行
 norm3 = Normalize(vmin=-2, vmax=2)
