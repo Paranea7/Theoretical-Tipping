@@ -64,12 +64,12 @@ def main():
 
     # 振幅与频率（默认 C_A=K_A=0，以实现基线对比；若要查看时变效应，可把振幅设为非零）
     r_A = 0.05      # r 振幅（基线为0）
-    K_A = 2.0      # K 振幅（基线为0）
-    c_A = 0.0      # c 振幅（基线为0）
+    K_A = 1.0      # K 振幅（基线为0）
+    c_A = 0.2      # c 振幅（基线为0）
 
     omega_r = 0.2
-    omega_K = 0.2
-    omega_c = 0.5
+    omega_K = 0.0
+    omega_c = 0.2
 
     # 1) 基线下的等值点（r=0.47, K=10, c=1，且不随时间变化）
     equilibria_baseline = find_equilibria(r0, K0, c0, r_A, K_A, c_A, omega_r, omega_K, omega_c, t_guess_span=[0.0, 5.0, 10.0])
