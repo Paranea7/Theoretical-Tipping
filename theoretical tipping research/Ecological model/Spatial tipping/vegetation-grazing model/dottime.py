@@ -43,7 +43,7 @@ point_values = []
 
 # 迭代计算
 for t in range(num_iterations):
-    V = rk4_step(V, r_static(), V_c,1.0)
+    V = rk4_step(V, r_static(), V_c,1.14)
     point_values.append(V[point_x, point_y])  # 记录选择点的值
 
 # 绘制该点随时间变化的图
